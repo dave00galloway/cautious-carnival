@@ -1,7 +1,7 @@
 package iloveyouboss;
 
 
-enum Weight {
+public enum Weight {
     MustMatch(Integer.MAX_VALUE),
     VeryImportant(5000),
     Important(1000),

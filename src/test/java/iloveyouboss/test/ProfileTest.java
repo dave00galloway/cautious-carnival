@@ -1,5 +1,6 @@
-package iloveyouboss;
+package iloveyouboss.test;
 
+import iloveyouboss.*;
 import org.junit.Before;
 import org.junit.Test;
 

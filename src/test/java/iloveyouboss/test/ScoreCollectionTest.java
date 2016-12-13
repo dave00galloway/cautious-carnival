@@ -1,5 +1,6 @@
-package iloveyouboss;
+package iloveyouboss.test;
 
+import iloveyouboss.ScoreCollection;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsEqual.equalTo;

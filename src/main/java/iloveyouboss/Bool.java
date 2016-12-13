@@ -1,7 +1,7 @@
 package iloveyouboss;
 
 
-enum Bool {
+public enum Bool {
     False(0),
     True(1);
 

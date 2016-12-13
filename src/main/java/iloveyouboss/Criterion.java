@@ -1,10 +1,10 @@
 package iloveyouboss;
 
-class Criterion {
+public class Criterion {
     private Answer answer;
     private Weight weight;
 
-    Criterion(Answer answer, Weight mustMatch) {
+    public Criterion(Answer answer, Weight mustMatch) {
 
         this.answer = answer;
         weight = mustMatch;

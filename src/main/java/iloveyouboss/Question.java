@@ -1,7 +1,7 @@
 package iloveyouboss;
 
 
-abstract class Question {
+public abstract class Question {
     private String text;
     private String[] answerChoices;
     private int id;

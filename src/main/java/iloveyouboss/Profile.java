@@ -3,12 +3,12 @@ package iloveyouboss;
 import java.util.HashMap;
 import java.util.Map;
 
-class Profile {
+public class Profile {
     private Map<String, Answer> answers = new HashMap<>();
     private int score;
     private String name;
 
-    Profile(String name) {
+    public Profile(String name) {
         this.name = name;
     }
 
@@ -20,11 +20,11 @@ class Profile {
         return name;
     }
 
-    void add(Answer answer) {
+    public void add(Answer answer) {
         answers.put(answer.getQuestionText(), answer);
     }
 
-    boolean matches(Criteria criteria) {
+    public boolean matches(Criteria criteria) {
         score = 0;
         boolean kill = false;
         boolean anyMatches = false;

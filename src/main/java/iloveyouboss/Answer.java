@@ -1,11 +1,11 @@
 package iloveyouboss;
 
-class Answer {
+public class Answer {
 
     private final Bool answerValue;
     private String questionText;
 
-    Answer(Question question, Bool aBoolean) {
+    public Answer(Question question, Bool aBoolean) {
         answerValue = aBoolean;
         questionText = question.getText();
     }
