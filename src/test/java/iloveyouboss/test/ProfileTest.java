@@ -90,8 +90,7 @@ public class ProfileTest {
     public void matchAnswersTrueWhenMustMatchCriteriaAreMetAndCriteriaHoldsManyCriterion() throws Exception {
         profile.add(new Answer(question, Bool.True));
         for (int i = 0; i < 10; i++) {
-            Bool aFalse;
-            aFalse = (i % 2 == 0) ? Bool.False : Bool.True;
+            Bool aFalse = (i % 2 == 0) ? Bool.False : Bool.True;
             criteria.add(new Criterion(new Answer(new BooleanQuestion(i, "some question " + i), aFalse), Weight.DontCare));
         }
         criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
@@ -103,8 +102,7 @@ public class ProfileTest {
     public void matchAnswersTrueWhenMustMatchCriteriaAreMetAndCriteriaHoldsManyMustMatchCriterion() throws Exception {
         profile.add(new Answer(question, Bool.True));
         for (int i = 0; i < 10; i++) {
-            Bool aFalse;
-            aFalse = (i % 2 == 0) ? Bool.False : Bool.True;
+            Bool aFalse = (i % 2 == 0) ? Bool.False : Bool.True;
             Answer answer = new Answer(new BooleanQuestion(i, "some question " + i), aFalse);
             profile.add(answer);
             criteria.add(new Criterion(answer, Weight.MustMatch));
@@ -132,6 +130,23 @@ public class ProfileTest {
         profile.matches(criteria);
         int postScore = profile.getScore();
         assertThat(postScore).isEqualTo(preScore);
+    }
+
+    @Test
+    public void matchAnswersTrueWhenAnyCriteriaAreMetAndCriteriaHoldsManyMustMatchCriterion() throws Exception {
+        for (int i = 0; i < 7; i++) {
+            Bool aBool = (i > 0 && i % 2 == 0) ? Bool.True : Bool.False;
+            Bool bBool = (i > 0 && i % 6 == 0) ? aBool : (aBool == Bool.False ? Bool.True : Bool.False);
+            Weight weight = (i % 6 == 0) ? Weight.Important : Weight.WouldPrefer;
+            BooleanQuestion booleanQuestion = new BooleanQuestion(i, "some question " + i);
+            Answer answer = new Answer(booleanQuestion, aBool);
+            profile.add(answer);
+            criteria.add(new Criterion(new Answer(booleanQuestion, bBool), weight));
+        }
+        boolean matches = profile.matches(criteria);
+        assertTrue(matches);
+        assertThat(profile.getScore()).isEqualTo(Weight.Important.getValue());
+
     }
 
 }
