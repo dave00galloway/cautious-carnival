@@ -7,4 +7,8 @@ public class Answer {
     public String getQuestionText() {
         return questionText;
     }
+
+    public boolean match(Answer answer) {
+        return false;
+    }
 }
