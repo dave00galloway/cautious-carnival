@@ -3,6 +3,7 @@ package iloveyouboss;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -110,6 +111,26 @@ public class ProfileTest {
         criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
         boolean matches = profile.matches(criteria);
         assertTrue(matches);
+    }
+
+    @Test
+    public void matchIncreasesProfileScore() {
+        int preScore = profile.getScore();
+        profile.add(new Answer(question, Bool.True));
+        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
+        profile.matches(criteria);
+        int postScore = profile.getScore();
+        assertThat(postScore).isGreaterThan(preScore);
+    }
+
+    @Test
+    public void noMatchDoesNotIncreaseProfileScore() {
+        int preScore = profile.getScore();
+        profile.add(new Answer(question, Bool.False));
+        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
+        profile.matches(criteria);
+        int postScore = profile.getScore();
+        assertThat(postScore).isEqualTo(preScore);
     }
 
 }
