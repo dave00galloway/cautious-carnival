@@ -30,7 +30,12 @@ class Profile {
         boolean anyMatches = false;
         for (Criterion criterion : criteria) {
             boolean match = false;
-            Answer answer = answers.get(criterion.getAnswer().getQuestionText());
+            Answer answer;
+            if (criterion != null) {
+                answer = answers.get(criterion.getAnswer().getQuestionText());
+            } else {
+                break;
+            }
             if (answer != null) {
                 match = criterion.getWeight() == Weight.DontCare || answer.match(criterion.getAnswer());
             }

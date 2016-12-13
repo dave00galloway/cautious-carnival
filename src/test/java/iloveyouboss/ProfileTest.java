@@ -60,4 +60,56 @@ public class ProfileTest {
         assertFalse(matches);
     }
 
+    @Test(expected = NullPointerException.class)
+    //todo:-move to criteriaTest.class
+    public void criteriaThrowsNPEWhenNoQuestionIsAsked() throws Exception {
+        profile.add(new Answer(question, Bool.False));
+        criteria.add(new Criterion(new Answer(null, Bool.False), Weight.MustMatch));
+        throw new Exception("Should have thrown an exception already!");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void matchThrowsNPEWhenNullAnswerIsSupplied() throws Exception {
+        profile.add(new Answer(question, Bool.False));
+        criteria.add(new Criterion(null, Weight.MustMatch));
+        boolean matches = profile.matches(criteria);
+        throw new IllegalAccessException(Boolean.toString(matches));
+    }
+
+    @Test
+    public void matchReturnsFalseWhenNullCriterionIsSupplied() throws Exception {
+        profile.add(new Answer(question, Bool.False));
+        criteria.add(null);
+        boolean matches = profile.matches(criteria);
+        assertFalse(matches);
+    }
+
+    @Test
+    public void matchAnswersTrueWhenMustMatchCriteriaAreMetAndCriteriaHoldsManyCriterion() throws Exception {
+        profile.add(new Answer(question, Bool.True));
+        for (int i = 0; i < 10; i++) {
+            Bool aFalse;
+            aFalse = (i % 2 == 0) ? Bool.False : Bool.True;
+            criteria.add(new Criterion(new Answer(new BooleanQuestion(i, "some question " + i), aFalse), Weight.DontCare));
+        }
+        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
+        boolean matches = profile.matches(criteria);
+        assertTrue(matches);
+    }
+
+    @Test
+    public void matchAnswersTrueWhenMustMatchCriteriaAreMetAndCriteriaHoldsManyMustMatchCriterion() throws Exception {
+        profile.add(new Answer(question, Bool.True));
+        for (int i = 0; i < 10; i++) {
+            Bool aFalse;
+            aFalse = (i % 2 == 0) ? Bool.False : Bool.True;
+            Answer answer = new Answer(new BooleanQuestion(i, "some question " + i), aFalse);
+            profile.add(answer);
+            criteria.add(new Criterion(answer, Weight.MustMatch));
+        }
+        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
+        boolean matches = profile.matches(criteria);
+        assertTrue(matches);
+    }
+
 }
