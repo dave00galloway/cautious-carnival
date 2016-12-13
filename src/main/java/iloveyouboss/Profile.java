@@ -3,11 +3,12 @@ package iloveyouboss;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Profile {
+class Profile {
     private Map<String, Answer> answers = new HashMap<>();
     private int score;
     private String name;
-    public Profile(String name) {
+
+    Profile(String name) {
         this.name = name;
     }
 
@@ -19,18 +20,20 @@ public class Profile {
         return name;
     }
 
-    public void add(Answer answer) {
+    void add(Answer answer) {
         answers.put(answer.getQuestionText(), answer);
     }
 
-    public boolean matches(Criteria criteria) {
+    boolean matches(Criteria criteria) {
         score = 0;
         boolean kill = false;
         boolean anyMatches = false;
-        for (Criteria criterion : criteria) {
+        for (Criterion criterion : criteria) {
+            boolean match = false;
             Answer answer = answers.get(criterion.getAnswer().getQuestionText());
-            boolean match = criterion.getWeight() == Weight.DontCare || answer.match(criterion.getAnswer());
-
+            if (answer != null) {
+                match = criterion.getWeight() == Weight.DontCare || answer.match(criterion.getAnswer());
+            }
             if (!match && criterion.getWeight() == Weight.MustMatch) {
                 kill = true;
             }
@@ -39,7 +42,7 @@ public class Profile {
             }
             anyMatches |= match;
         }
+        return !kill && anyMatches;
 
-        return anyMatches;
     }
 }

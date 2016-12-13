@@ -1,15 +1,28 @@
 package iloveyouboss;
 
 
-public class Criteria {
-    private Answer answer;
-    private Object weight;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-    public Answer getAnswer() {
-        return answer;
+class Criteria implements Iterable<Criterion> {
+
+    private final List<Criterion> criteria = new ArrayList<>();
+
+    Criteria() {
+
     }
 
-    public Object getWeight() {
-        return weight;
+    public List<Criterion> getCriteria() {
+        return criteria;
+    }
+
+    @Override
+    public Iterator<Criterion> iterator() {
+        return criteria.iterator();
+    }
+
+    void add(Criterion criterion) {
+        criteria.add(criterion);
     }
 }
