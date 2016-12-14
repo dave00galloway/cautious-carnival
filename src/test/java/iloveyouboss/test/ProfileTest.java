@@ -15,6 +15,10 @@ public class ProfileTest {
     private Question question;
     private Criteria criteria;
 
+    //changed tests to use fixed question and answer fields. much clearer than the looping nonsense
+    // I was using, which was a replacement for a question/answer manager class.
+    // for a small number of tests, fixed fields is totally fine
+
     private Question questionReimbursesTuition;
     private Answer answerReimbursesTuition;
     private Answer answerDoesNotReimburseTuition;
@@ -124,26 +128,24 @@ public class ProfileTest {
 
     @Test
     public void matchAnswersTrueWhenMustMatchCriteriaAreMetAndCriteriaHoldsManyCriterion() throws Exception {
-        profile.add(new Answer(question, Bool.True));
-        for (int i = 0; i < 10; i++) {
-            Bool aFalse = (i % 2 == 0) ? Bool.False : Bool.True;
-            criteria.add(new Criterion(new Answer(new BooleanQuestion(i, "some question " + i), aFalse), Weight.DontCare));
-        }
-        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
+        profile.add(answerThereIsNoRelocation);
+        profile.add(answerDoesNotReimburseTuition);
+        profile.add(answerHasOnsiteDaycare);
+        criteria.add(new Criterion(answerThereIsRelocation, Weight.Important));
+        criteria.add(new Criterion(answerReimbursesTuition, Weight.VeryImportant));
+        criteria.add(new Criterion(answerHasOnsiteDaycare, Weight.MustMatch));
         boolean matches = profile.matches(criteria);
         assertTrue(matches);
     }
 
     @Test
     public void matchAnswersTrueWhenMustMatchCriteriaAreMetAndCriteriaHoldsManyMustMatchCriterion() throws Exception {
-        profile.add(new Answer(question, Bool.True));
-        for (int i = 0; i < 10; i++) {
-            Bool aFalse = (i % 2 == 0) ? Bool.False : Bool.True;
-            Answer answer = new Answer(new BooleanQuestion(i, "some question " + i), aFalse);
-            profile.add(answer);
-            criteria.add(new Criterion(answer, Weight.MustMatch));
-        }
-        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
+        profile.add(answerThereIsRelocation);
+        profile.add(answerReimbursesTuition);
+        profile.add(answerHasOnsiteDaycare);
+        criteria.add(new Criterion(answerThereIsRelocation, Weight.MustMatch));
+        criteria.add(new Criterion(answerReimbursesTuition, Weight.MustMatch));
+        criteria.add(new Criterion(answerHasOnsiteDaycare, Weight.MustMatch));
         boolean matches = profile.matches(criteria);
         assertTrue(matches);
     }
