@@ -15,11 +15,47 @@ public class ProfileTest {
     private Question question;
     private Criteria criteria;
 
+    private Question questionReimbursesTuition;
+    private Answer answerReimbursesTuition;
+    private Answer answerDoesNotReimburseTuition;
+
+    private Question questionIsThereRelocation;
+    private Answer answerThereIsRelocation;
+    private Answer answerThereIsNoRelocation;
+
+    private Question questionOnsiteDaycare;
+    private Answer answerNoOnsiteDaycare;
+    private Answer answerHasOnsiteDaycare;
+
     @Before
     public void setUp() throws Exception {
         profile = new Profile("Bull Hockey, Inc");
         question = new BooleanQuestion(1, "Got Bonuses?");
         criteria = new Criteria();
+        createQuestionsAndAnswers();
+    }
+
+    private void createQuestionsAndAnswers() {
+        questionIsThereRelocation =
+                new BooleanQuestion(1, "Relocation package?");
+        answerThereIsRelocation =
+                new Answer(questionIsThereRelocation, Bool.True);
+        answerThereIsNoRelocation =
+                new Answer(questionIsThereRelocation, Bool.False);
+
+        questionReimbursesTuition =
+                new BooleanQuestion(1, "Reimburses tuition?");
+        answerReimbursesTuition =
+                new Answer(questionReimbursesTuition, Bool.True);
+        answerDoesNotReimburseTuition =
+                new Answer(questionReimbursesTuition, Bool.False);
+
+        questionOnsiteDaycare =
+                new BooleanQuestion(1, "Onsite daycare?");
+        answerHasOnsiteDaycare =
+                new Answer(questionOnsiteDaycare, Bool.True);
+        answerNoOnsiteDaycare =
+                new Answer(questionOnsiteDaycare, Bool.False);
     }
 
     @Test
@@ -133,20 +169,61 @@ public class ProfileTest {
     }
 
     @Test
-    public void matchAnswersTrueWhenAnyCriteriaAreMetAndCriteriaHoldsManyMustMatchCriterion() throws Exception {
-        for (int i = 0; i < 7; i++) {
-            Bool aBool = (i > 0 && i % 2 == 0) ? Bool.True : Bool.False;
-            Bool bBool = (i > 0 && i % 6 == 0) ? aBool : (aBool == Bool.False ? Bool.True : Bool.False);
-            Weight weight = (i % 6 == 0) ? Weight.Important : Weight.WouldPrefer;
-            BooleanQuestion booleanQuestion = new BooleanQuestion(i, "some question " + i);
-            Answer answer = new Answer(booleanQuestion, aBool);
-            profile.add(answer);
-            criteria.add(new Criterion(new Answer(booleanQuestion, bBool), weight));
-        }
-        boolean matches = profile.matches(criteria);
-        assertTrue(matches);
-        assertThat(profile.getScore()).isEqualTo(Weight.Important.getValue());
+    public void scoreIsCriterionValueForSingleMatch() {
+        profile.add(answerThereIsRelocation);
+        criteria.add(new Criterion(answerThereIsRelocation, Weight.Important));
 
+        profile.matches(criteria);
+
+        assertThat(profile.getScore()).isEqualTo(Weight.Important.getValue());
     }
 
+    @Test
+    public void scoreAccumulatesCriterionValuesForMatches() {
+        profile.add(answerThereIsRelocation);
+        profile.add(answerReimbursesTuition);
+        profile.add(answerNoOnsiteDaycare);
+        criteria.add(new Criterion(answerThereIsRelocation, Weight.Important));
+        criteria.add(new Criterion(answerReimbursesTuition, Weight.WouldPrefer));
+        criteria.add(new Criterion(answerHasOnsiteDaycare, Weight.VeryImportant));
+
+        profile.matches(criteria);
+
+        int expectedScore = Weight.Important.getValue() + Weight.WouldPrefer.getValue();
+        assertThat(profile.getScore()).isEqualTo(expectedScore);
+    }
+
+    @Test
+    public void matchAnswersTrueWhenAnyOfMultipleCriteriaMatch() {
+        profile.add(answerThereIsRelocation);
+        profile.add(answerDoesNotReimburseTuition);
+        criteria.add(new Criterion(answerThereIsRelocation, Weight.Important));
+        criteria.add(new Criterion(answerReimbursesTuition, Weight.Important));
+
+        boolean matches = profile.matches(criteria);
+
+        assertTrue(matches);
+    }
+
+    @Test
+    public void matchAnswersFalseWhenNoneOfMultipleCriteriaMatch() {
+        profile.add(answerThereIsNoRelocation);
+        profile.add(answerDoesNotReimburseTuition);
+        criteria.add(new Criterion(answerThereIsRelocation, Weight.Important));
+        criteria.add(new Criterion(answerReimbursesTuition, Weight.Important));
+
+        boolean matches = profile.matches(criteria);
+
+        assertFalse(matches);
+    }
+
+    @Test
+    public void scoreIsZeroWhenThereAreNoMatches() {
+        profile.add(answerThereIsNoRelocation);
+        criteria.add(new Criterion(answerThereIsRelocation, Weight.Important));
+
+        profile.matches(criteria);
+
+        assertThat(profile.getScore()).isEqualTo(0);
+    }
 }
