@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 public class ProfileTest {
 
     private Profile profile;
-    private Question question;
     private Criteria criteria;
 
     //changed tests to use fixed question and answer fields. much clearer than the looping nonsense
@@ -34,7 +33,6 @@ public class ProfileTest {
     @Before
     public void setUp() throws Exception {
         profile = new Profile("Bull Hockey, Inc");
-        question = new BooleanQuestion(1, "Got Bonuses?");
         criteria = new Criteria();
         createQuestionsAndAnswers();
     }
@@ -64,39 +62,39 @@ public class ProfileTest {
 
     @Test
     public void matchAnswersFalseWhenMustMatchCriteriaNotMet() throws Exception {
-        profile.add(new Answer(question, Bool.False));
-        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
+        profile.add(new Answer(questionOnsiteDaycare, Bool.False));
+        criteria.add(new Criterion(new Answer(questionOnsiteDaycare, Bool.True), Weight.MustMatch));
         boolean matches = profile.matches(criteria);
         assertFalse(matches);
     }
 
     @Test
     public void matchAnswersTrueWhenMustMatchCriteriaAreMet() throws Exception {
-        profile.add(new Answer(question, Bool.True));
-        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
+        profile.add(new Answer(questionReimbursesTuition, Bool.True));
+        criteria.add(new Criterion(new Answer(questionReimbursesTuition, Bool.True), Weight.MustMatch));
         boolean matches = profile.matches(criteria);
         assertTrue(matches);
     }
 
     @Test
     public void matchAnswersTrueWhenCriteriaCareNotIsNotMet() throws Exception {
-        profile.add(new Answer(question, Bool.False));
-        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.DontCare));
+        profile.add(new Answer(questionIsThereRelocation, Bool.False));
+        criteria.add(new Criterion(new Answer(questionIsThereRelocation, Bool.True), Weight.DontCare));
         boolean matches = profile.matches(criteria);
         assertTrue(matches);
     }
 
     @Test
     public void matchAnswersTrueWhenCriteriaCareNotIsMet() throws Exception {
-        profile.add(new Answer(question, Bool.False));
-        criteria.add(new Criterion(new Answer(question, Bool.False), Weight.DontCare));
+        profile.add(new Answer(questionReimbursesTuition, Bool.False));
+        criteria.add(new Criterion(new Answer(questionReimbursesTuition, Bool.False), Weight.DontCare));
         boolean matches = profile.matches(criteria);
         assertTrue(matches);
     }
 
     @Test
     public void matchAnswersFalseWhenDifferentQuestionIsAsked() throws Exception {
-        profile.add(new Answer(question, Bool.False));
+        profile.add(new Answer(questionOnsiteDaycare, Bool.False));
         criteria.add(new Criterion(new Answer(new BooleanQuestion(2, "some question"), Bool.False), Weight.MustMatch));
         boolean matches = profile.matches(criteria);
         assertFalse(matches);
@@ -105,14 +103,14 @@ public class ProfileTest {
     @Test(expected = NullPointerException.class)
     //todo:-move to criteriaTest.class
     public void criteriaThrowsNPEWhenNoQuestionIsAsked() throws Exception {
-        profile.add(new Answer(question, Bool.False));
+        profile.add(new Answer(questionOnsiteDaycare, Bool.False));
         criteria.add(new Criterion(new Answer(null, Bool.False), Weight.MustMatch));
         throw new Exception("Should have thrown an exception already!");
     }
 
     @Test(expected = NullPointerException.class)
     public void matchThrowsNPEWhenNullAnswerIsSupplied() throws Exception {
-        profile.add(new Answer(question, Bool.False));
+        profile.add(new Answer(questionOnsiteDaycare, Bool.False));
         criteria.add(new Criterion(null, Weight.MustMatch));
         boolean matches = profile.matches(criteria);
         throw new IllegalAccessException(Boolean.toString(matches));
@@ -120,7 +118,7 @@ public class ProfileTest {
 
     @Test
     public void matchReturnsFalseWhenNullCriterionIsSupplied() throws Exception {
-        profile.add(new Answer(question, Bool.False));
+        profile.add(new Answer(questionOnsiteDaycare, Bool.False));
         criteria.add(null);
         boolean matches = profile.matches(criteria);
         assertFalse(matches);
@@ -153,8 +151,8 @@ public class ProfileTest {
     @Test
     public void matchIncreasesProfileScore() {
         int preScore = profile.getScore();
-        profile.add(new Answer(question, Bool.True));
-        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
+        profile.add(new Answer(questionOnsiteDaycare, Bool.True));
+        criteria.add(new Criterion(new Answer(questionOnsiteDaycare, Bool.True), Weight.MustMatch));
         profile.matches(criteria);
         int postScore = profile.getScore();
         assertThat(postScore).isGreaterThan(preScore);
@@ -163,8 +161,8 @@ public class ProfileTest {
     @Test
     public void noMatchDoesNotIncreaseProfileScore() {
         int preScore = profile.getScore();
-        profile.add(new Answer(question, Bool.False));
-        criteria.add(new Criterion(new Answer(question, Bool.True), Weight.MustMatch));
+        profile.add(new Answer(questionOnsiteDaycare, Bool.False));
+        criteria.add(new Criterion(new Answer(questionOnsiteDaycare, Bool.True), Weight.MustMatch));
         profile.matches(criteria);
         int postScore = profile.getScore();
         assertThat(postScore).isEqualTo(preScore);
