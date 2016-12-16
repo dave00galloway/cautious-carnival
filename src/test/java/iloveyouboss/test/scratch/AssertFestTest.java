@@ -5,12 +5,10 @@ import iloveyouboss.InsufficientFundsException;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertTrue;
+import static org.fest.assertions.api.Assertions.assertThat;
 
-public class AssertTest {
+
+public class AssertFestTest {
 
 
     private Account account;
@@ -23,30 +21,33 @@ public class AssertTest {
     @Test
     public void hasPositiveBalance() {
         account.deposit(50);
-        assertTrue(account.hasPositiveBalance());
+        assertThat(account.hasPositiveBalance()).isTrue();
     }
 
     @Test
     public void depositIncreasesBalance() {
         int initialBalance = account.getBalance();
         account.deposit(100);
-        assertTrue(account.getBalance() > initialBalance);
+        assertThat(account.getBalance() > initialBalance).isTrue();
     }
 
     @Test
     public void accountNameStartsWithM() {
-        assertThat(account.getAccountName(), startsWith("M"));
+        assertThat(account.getAccountName().startsWith("M"));
     }
 
     @Test
     public void accountNameNotNull() {
-        assertThat(account.getAccountName(), is(not(nullValue())));
+        assertThat(account.getAccountName()).isNotNull();
     }
 
-    @Test(expected = InsufficientFundsException.class)
-    public void throwsWhenWithDrawingTooMuch() throws Throwable {
-        account.withdraw(100);
+    @Test
+    public void insufficientFundsMessageContainsAmount() throws Throwable {
+        try {
+            account.withdraw(100);
+        } catch (InsufficientFundsException e) {
+            // e.printStackTrace();
+            assertThat(e.getMessage()).contains("amount:- 100");
+        }
     }
-
-
 }

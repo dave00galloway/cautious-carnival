@@ -26,4 +26,12 @@ public class Account {
     public String getAccountName() {
         return accountName;
     }
+
+    public int withdraw(int amount) throws InsufficientFundsException {
+        if (balance >= amount) {
+            balance -= amount;
+            return amount;
+        }
+        throw new InsufficientFundsException("amount:- " + amount + " is greater than balance: " + balance);
+    }
 }
