@@ -3,7 +3,9 @@ package iloveyouboss.test.scratch;
 import iloveyouboss.Account;
 import iloveyouboss.InsufficientFundsException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -13,6 +15,8 @@ import static org.junit.Assert.assertTrue;
 public class AssertTest {
 
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     private Account account;
 
     @Before
@@ -48,5 +52,10 @@ public class AssertTest {
         account.withdraw(100);
     }
 
-
+    @Test
+    public void insufficientFundsMessageContainsAmout() throws Throwable {
+        thrown.expect(InsufficientFundsException.class);
+        thrown.expectMessage("amount:- 100");
+        account.withdraw(100);
+    }
 }
