@@ -18,7 +18,7 @@ public abstract class Question {
 
     abstract public boolean match(int expected, int actual);
 
-    String getText() {
+    public String getText() {
         return text;
     }
 
