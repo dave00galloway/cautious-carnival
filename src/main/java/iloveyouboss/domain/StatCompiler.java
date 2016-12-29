@@ -10,16 +10,27 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StatCompiler {
     private QuestionController controller = new QuestionController();
 
-    public Map<String, Map<Boolean, AtomicInteger>> responsesByQuestion(List<BooleanAnswer> answers) {
+    public Map<String, Map<Boolean, AtomicInteger>> responsesByQuestion(List<BooleanAnswer> answers,
+                                                                        Map<Integer, String> questions) {
         Map<Integer, Map<Boolean, AtomicInteger>> responses = new HashMap<>();
         answers.stream().forEach(answer -> incrementHistogram(responses, answer));
-        return convertHistogramIdsToText(responses);
+        return convertHistogramIdsToText(responses, questions);
 
     }
 
-    private Map<String, Map<Boolean, AtomicInteger>> convertHistogramIdsToText(Map<Integer, Map<Boolean, AtomicInteger>> responses) {
+    public Map<Integer, String> questionText(List<BooleanAnswer> answers) {
+        Map<Integer, String> questions = new HashMap<>();
+        answers.stream().forEach(answer -> {
+            if (!questions.containsKey(answer.getQuestionId())) questions.put(answer.getQuestionId(),
+                    controller.find(answer.getQuestionId()).getText());
+        });
+        return questions;
+    }
+
+    private Map<String, Map<Boolean, AtomicInteger>> convertHistogramIdsToText(
+            Map<Integer, Map<Boolean, AtomicInteger>> responses, Map<Integer, String> questions) {
         Map<String, Map<Boolean, AtomicInteger>> textResponses = new HashMap<>();
-        responses.keySet().stream().forEach(id -> textResponses.put(controller.find(id).getText(), responses.get(id)));
+        responses.keySet().stream().forEach(id -> textResponses.put(questions.get(id), responses.get(id)));
         return textResponses;
     }
 
