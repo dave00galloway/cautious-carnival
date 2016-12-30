@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.postgresql:postgresql:9.3-1102-jdbc3">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.postgresql/postgresql/9.3-1102-jdbc3/a194ef8bf591b530da673ef731fe696c2568e9c8/postgresql-9.3-1102-jdbc3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.postgresql/postgresql/9.3-1102-jdbc3/5b88f6c48bee3a3049a63145b57991fa5ec1669c/postgresql-9.3-1102-jdbc3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

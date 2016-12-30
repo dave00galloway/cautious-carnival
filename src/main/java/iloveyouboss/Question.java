@@ -1,15 +1,22 @@
 package iloveyouboss;
 
 
+import java.time.Instant;
+
 public abstract class Question {
     private String text;
     private String[] answerChoices;
     private int id;
+    private Instant createTimestamp;
 
     Question(String text, String[] answerChoices, int id) {
         this.text = text;
         this.answerChoices = answerChoices;
         this.id = id;
+    }
+
+    public Question(String text) {
+
     }
 
     public boolean match(Answer answer) {
@@ -40,5 +47,9 @@ public abstract class Question {
 
     public int getId() {
         return id;
+    }
+
+    public Instant getCreateTimestamp() {
+        return createTimestamp;
     }
 }
